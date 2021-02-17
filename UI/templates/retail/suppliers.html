@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+    <div class="card mt-3">
+        <div class="card-header">
+            <h5 id="title">Suppliers</h5>
+        </div>
+        <ul class="nav nav-pills sr-only" id="myTab" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#list" role="tab"
+                    aria-controls="pills-home" aria-selected="true">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#form" role="tab"
+                    aria-controls="pills-profile" aria-selected="false">Profile</a>
+            </li>
+        </ul>
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active" id="list" role="tabpanel" aria-labelledby="pills-home-tab">
+                
+                <div class="card-body">
+                    <div class="form-group">
+                        <button class="btn btn-primary btn-sm" id="newCustomer">
+                            <i class="fa fa-plus-circle"></i> Add New Supplier
+                        </button>
+                    </div>
+                    <table class="table table-hover table-striped table-sm" id="Customers">
+                        <thead>
+                            <tr class="bg-primary text-light">
+                                <th>Slno</th>
+                                <th>Supplier Name</th>
+                                <th>Email</th>
+                                <th>Phone Number</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="form" role="tabpanel" aria-labelledby="pills-home-tab">
+                <div class="card-body">
+                    <form id="customerForm">
+                        <div class="row">
+                            <div class="offset-md-3 col-md-6">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <input type="hidden" name="id" id="cus_id">
+                                        <input type="hidden" name="partType" value="S">
+                                        <div class="from-group">
+                                            <label for="name">Supplier Name</label>
+                                            <input type="text" class="form-control" name="name" id="name" placeholder="Enter Supplier Name">
+                                        </div>
+                                        <div class="from-group">
+                                            <label for="email">Email</label>
+                                            <input type="text" class="form-control" name="email" id="email" placeholder="Enter Supplier Email">
+                                        </div>
+                                        <div class="from-group">
+                                            <label for="phoneNumber">Phone Number</label>
+                                            <input type="text" class="form-control" name="phoneNumber" id="phoneNumber" placeholder="Enter Supplier Phone Number">
+                                        </div>
+                                        <div class="from-group">
+                                            <label for="address">address</label>
+                                            <textarea name="address" id="address" class="form-control" rows="4"
+                                                placeholder="Enter Cutomer Address"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group mt-3">
+                                    <button class="btn btn-primary" id="submitBtn">
+                                        Add Customer
+                                    </button>
+                                    <button class="btn btn-secondary" type="reset">
+                                        Reset
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer">
+                    <button class="btn btn-primary btn-sm float-right" id="listCustomer">
+                        <i class="fa fa-tasks"></i> Inventory List
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+
+<script>
+    $(document).ready(function(){
+        $('#newCustomer').click(function(){
+          $('#myTab a[href="#form"]').tab('show')
+        })
+        
+        $('#listCustomer').click(function(){
+          $('#myTab a[href="#list"]').tab('show')
+        })
+
+        var table = $('#Customers').DataTable({
+            ajax:{
+                url:'/api/pos/suppliers/',
+                dataSrc:''
+            },
+            columns:[
+                {
+                    data:'id',
+                    "className":"align-middle"
+                },{
+                    data:'name',
+                    "className":"align-middle"
+                },{
+                    data:'email',
+                    "className":"align-middle"
+                },{
+                    data:'phoneNumber',
+                    "className":"align-middle"
+                },{
+                    data:'id',
+                    render:function(data,type,row){
+                        return `<button type="button" data-id='${data}' data-obj='${JSON.stringify(row)}' class="btn rounded-circle btn-primary btn-sm edit">
+                                    <i class="fa fa-edit"></i>
+                                </button>
+                                <button type="button" data-id='${data}' class="btn rounded-circle btn-danger btn-sm delete">
+                                    <i class="fa fa-trash"></i>
+                                </button>`
+                    }
+                }
+            ],
+            fnRowCallback: function (nRow, aData, iDisplayIndex) {
+                $("td:first", nRow).html(iDisplayIndex + 1);
+                return nRow;
+            }
+        })
+
+        crudOperations({
+              url:'/api/pos/suppliers/',
+              put_url: '/api/pos/customers/',
+              table_id:'#Customers',
+              id_selector:'#cus_id',
+              form_id:'#customerForm',
+              table:table,
+              entity:'Customer',
+              tabs:true,
+        })
+    })
+</script>
+
+{% endblock %}

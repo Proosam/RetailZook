@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+    <div class="card mt-3">
+        <div class="card-header">
+            <h5 id="title">Item Inventory</h5>
+        </div>
+        <ul class="nav nav-pills sr-only" id="myTab" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#list" role="tab"
+                    aria-controls="pills-home" aria-selected="true">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#form" role="tab"
+                    aria-controls="pills-profile" aria-selected="false">Profile</a>
+            </li>
+        </ul>
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active" id="list" role="tabpanel" aria-labelledby="pills-home-tab">
+                
+                <div class="card-body">
+                    <div class="form-group">
+                        <button class="btn btn-primary btn-sm" id="newInventory">
+                            <i class="fa fa-plus-circle"></i> Add New Item
+                        </button>
+                    </div>
+                    <table class="table table-hover table-striped table-sm" id="ItemInventory">
+                        <thead>
+                            <tr class="bg-primary text-light">
+                                <th>Slno</th>
+                                <th>Item Name</th>
+                                <th>Description</th>
+                                <th>Selling Price</th>
+                                <th>Cost Price</th>
+                                <th>Available Stock</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="form" role="tabpanel" aria-labelledby="pills-home-tab">
+                <div class="card-body">
+                    <form id="inventoryForm">
+                        <div class="row">
+                            <div class="offset-md-3 col-md-6">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <input type="hidden" name="id" id="inv_id">
+                                        <div class="from-group">
+                                            <label for="name">Item Name</label>
+                                            <input type="text" class="form-control" name="name" id="name" placeholder="Enter Item Name">
+                                        </div>
+                                        <div class="from-group">
+                                            <label for="description">Item Description</label>
+                                            <textarea name="description" id="description" class="form-control" rows="4"
+                                                placeholder="Enter Item Description"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="from-group">
+                                            <label for="price">Selling Price</label>
+                                            <input type="text" class="form-control" name="sellingPrice" id="sellingPrice" placeholder="Enter Item Price">
+                                        </div>
+                                        <div class="from-group">
+                                            <label for="price">Cost Price</label>
+                                            <input type="text" class="form-control" name="costPrice" id="costPrice" placeholder="Enter Item Price">
+                                        </div>
+                                        <div class="from-group">
+                                            <label for="available_stock">Available Stock</label>
+                                            <input type="text" class="form-control" name="available_stock" id="available_stock"
+                                                placeholder="Enter Available Stock">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="from-group">
+                                            <label for="price">Tax Percent</label>
+                                            <input type="text" class="form-control" name="tax_percent" id="tax_percent"
+                                                placeholder="Enter Tax Percentage">
+                                        </div>
+                                        <div class="from-group">
+                                            <label for="uom">UOM</label>
+                                            <select name="uom" id="uom" class="form-control">
+                                                <option value="">Select UOM</option>
+                                                {% for uom in uoms %}
+                                                <option value="{{uom.unit}}">{{uom.unit}}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group mt-3">
+                                    <button class="btn btn-primary" id="submitBtn">
+                                        Add Item
+                                    </button>
+                                    <button class="btn btn-secondary" type="reset">
+                                        Reset
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer">
+                    <button class="btn btn-primary btn-sm float-right" id="listInventory">
+                        <i class="fa fa-tasks"></i> Inventory List
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+
+<script>
+    $(document).ready(function(){
+        $('#newInventory').click(function(){
+          $('#myTab a[href="#form"]').tab('show')
+        })
+        
+        $('#listInventory').click(function(){
+          $('#myTab a[href="#list"]').tab('show')
+        })
+
+        var table = $('#ItemInventory').DataTable({
+            ajax:{
+                url:'/api/pos/products/',
+                dataSrc:''
+            },
+            columns:[
+                {
+                    data:'id',
+                    "className":"align-middle"
+                },{
+                    data:'name',
+                    "className":"align-middle"
+                },{
+                    data:'description',
+                    "className":"align-middle"
+                },{
+                    data:'sellingPrice',
+                    "className":"align-middle"
+                },{
+                    data:'costPrice',
+                    "className":"align-middle"
+                },{
+                    data:'available_stock',
+                    render:function(data,type,product){
+                        return `${data} ${product.uom}`
+                    },
+                    "className":"align-middle"
+                },{
+                    data:'id',
+                    render:function(data,type,row){
+                        return `<button type="button" data-id='${data}' data-obj='${JSON.stringify(row)}' class="btn rounded-circle btn-primary btn-sm edit">
+                                    <i class="fa fa-edit"></i>
+                                </button>
+                                <button type="button" data-id='${data}' class="btn rounded-circle btn-danger btn-sm delete">
+                                    <i class="fa fa-trash"></i>
+                                </button>`
+                    }
+                }
+            ],
+            fnRowCallback: function (nRow, aData, iDisplayIndex) {
+                $("td:first", nRow).html(iDisplayIndex + 1);
+                return nRow;
+            }
+        })
+
+        crudOperations({
+              url:'/api/pos/products/',
+              put_url: '/api/pos/products/',
+              table_id:'#ItemInventory',
+              id_selector:'#inv_id',
+              form_id:'#inventoryForm',
+              table:table,
+              entity:'Item',
+              tabs:true,
+        })
+    })
+</script>
+
+{% endblock %}

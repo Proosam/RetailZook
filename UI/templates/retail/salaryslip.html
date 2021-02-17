@@ -1,0 +1,106 @@
+
+{% extends 'base.html' %}
+
+{% block content %}
+{% load static %}
+<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css"/>
+<script src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+
+<div class="container ">
+    
+    <div class="row bg-light">
+        
+        <div class="well col-xs-10 col-sm-10 col-md-6 col-xs-offset-1 col-sm-offset-1 col-md-offset-3 bg-secondary">
+            <div class="row">
+               
+                <div class="col-xs-6 col-sm-6 col-md-6">
+                   
+                        <br><br>
+                    <address>
+                        <strong>{{user.username}}</strong>
+                        <br />
+                        ibb yemen                        <br />
+                        
+                        <br />
+                        <abbr title="Phone">P:</abbr> (213) 484-6829
+                    </address>
+                </div>
+                <span class="float-left"> 
+                    <br><br>
+                    <h6 class="mb-3">salary from </h6>
+                        <div>
+                            <strong>Zak Pharma</strong>
+                        </div>
+                        <div>Email : alyafee.zak123@gmail.com</div>
+                        <div>Phone : 00967770101007</div>
+                    
+            </div>
+            <div class="row ">
+              
+                <br><br>
+                <div class="col-sm-12">
+                    <img src="{% static 'images/logo.jpeg' %}" class="float-right" alt="" id="logoImage" style="height:100px;width:120px">
+                </div>
+                                                                
+               <br><br>
+                <table class=" table table-sm">
+                    <thead >
+                        <tr class="table-info">
+                            <th>employee Name</th>
+                            <th>days attended</th>
+                            <th class="text-center">net salry</th>
+                            <th class="text-center">allowance </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="bg-info">
+                            <td class="col-md-9 "><em></em></td>
+                            <td class="col-md-1" style="text-align: center "> 2 </td>
+                            <td class="col-md-1  text-center ">$13</td>
+                            <td class="col-md-1  text-center ">$26</td>
+                        </tr>
+                        <tr>
+                            
+                        </tr>
+                        <tr>
+                            
+                        </tr>
+                        <tr class="bg-info">
+                            <td bg-success>   </td>
+                            <td bg-success>   </td>
+                            <td class="text-right bg-info">
+                            <p>
+                                <strong>totall: </strong>
+                            </p>
+                            </td>
+                            <td class="text-center ">
+                            <p>
+                                <strong>$6.94</strong>
+                            </p>
+                            <p>
+                            </p></td>
+                        </tr>
+                        <tr class="bg-info">
+                            <td>   </td>
+                            <td>   </td>
+                            <td class="text-right"><h4><strong>Total: </strong></h4></td>
+                            <td class="text-center text-danger"><h4><strong>$31.53</strong></h4></td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <button class="btn btn-warning  btn-sm-block " onclick="window.print()"><i class="fa fa-print"></i>
+                    Print</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+{% block scripts %}
+
+<script> 
+</script>
+{% endblock %}

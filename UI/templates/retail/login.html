@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container justify-content-center">
+    <div class="row">
+        <div class="col-md-4 offset-md-4">
+            <div class="card align-middle" style="margin-top: 120px;">
+    <article class="card-body">
+        <h4 class="card-title text-center mb-4 mt-1">Sign in</h4>
+        <form id="loginForm" method="POST">
+            {% csrf_token %}
+        <div class="form-group">
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <span class="input-group-text"> <i class="fa fa-user"></i> </span>
+             </div>
+            <input name="username" class="form-control" placeholder="username" type="text">
+        </div> <!-- input-group.// -->
+        </div> <!-- form-group// -->
+        <div class="form-group">
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
+             </div>
+            <input class="form-control" placeholder="******" type="password" name="password">
+        </div> <!-- input-group.// -->
+        </div> <!-- form-group// -->
+        <div class="form-group">
+        <button type="submit" class="btn btn-primary btn-block"> Login  </button>
+        </div> <!-- form-group// -->
+        </form>
+    </article>
+    </div>
+        </div>
+    </div>
+    
+    
+</div>
+
+{% endblock %}

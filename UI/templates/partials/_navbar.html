@@ -1,0 +1,61 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-info ">
+    <div class="container-fluid style=float-right" >
+    
+
+
+        <ul class="navbar-nav">
+          <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="#">{{user.username}}اهلا يا شيخ</a>
+              
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="/signOut">Logout</a>
+            </li>
+      </ul>
+        {% if user.is_authenticated %}
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto ml-auto">
+          <li class="nav-item">
+            <a class="nav-link {% if request.path == '/Home' %} active {% endif %}" aria-current="page" href="/Home">Home</a>
+          </li>
+          <li class="nav-item">
+        <!----  <a class="nav-link {% if request.path == '/Dashboard' %} active {% endif %}" aria-current="page" href="/Dashboard">Dashboard</a> -->
+          </li>
+
+          
+          <li class="nav-item dropdown">
+            <a class="nav-link {% if request.path == '/UOMs' or request.path == '/Customers' or request.path == '/Suppliers' %} active {% endif %} dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Masters
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <a class="dropdown-item" href="/UOMs">UOMs</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="/Customers">Customers</a>
+              <a class="dropdown-item" href="/Suppliers">Suppliers</a>
+              <a class="dropdown-item" href="/employee">employers reg</a>
+
+            </div>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.path == '/Inventory' %} active {% endif %}" href="/Inventory">Inventory</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.path == '/Purchase' %} active {% endif %}" href="/Purchase">Purchase</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.path == '/Sales' %} active {% endif %}" href="/Sales">Sales</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.path == '/Reports' %} active {% endif %}" href="/Reports">Reports</a>
+          </li>
+        </ul>
+        <a class="navbar-brand" href="#">
+          Retail Shop Billing<br>
+        </a>
+      </div>
+      {% endif %}
+    </div>
+  </nav>

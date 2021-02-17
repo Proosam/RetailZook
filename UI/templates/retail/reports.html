@@ -1,0 +1,436 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+    <div class="card mt-3">
+        <div class="card-header">
+            <h5 id="title">Reports</h5>
+            <ul class="nav nav-pills nav-justified" id="myTab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#SalesList" role="tab"
+                        aria-controls="pills-home" aria-selected="true">Sales Invoices</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#PurchaseList" role="tab"
+                        aria-controls="pills-profile" aria-selected="false">Purchase Invoices</a>
+                </li>
+              
+                <li class="nav-item">
+                    <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#ItemWiseSalesList" role="tab"
+                        aria-controls="pills-profile" aria-selected="false">Item Wise Sales</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#ItemWisePurchaseList" role="tab"
+                        aria-controls="pills-profile" aria-selected="false">Item Wise Purchase</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#StockList" role="tab"
+                        aria-controls="pills-profile" aria-selected="false">Stock Value</a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active" id="SalesList" role="tabpanel" aria-labelledby="pills-home-tab">
+
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-68c">
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <input type="date" class="form-control" id="salesFrom">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"> to </span>
+                                    </div>
+                                    <input type="date" class="form-control" id="salesTo">
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-primary" id="getSalesBills">
+                                            Get Reports
+                                        </button>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <table style="width:100%" class="table table-hover table-striped table-sm" id="SalesBillsTable">
+                        <thead>
+                            <tr class="bg-danger text-light">
+                                <th>Bill No.</th>
+                                <th>Customer Name</th>
+                                <th>Bill Total</th>
+                                <th>Tax Amount</th>
+                                <th>Net Amount</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="tab-pane fade" id="PurchaseList" role="tabpanel" aria-labelledby="pills-home-tab">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <input type="date" class="form-control" id="purchaseFrom">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"> to </span>
+                                    </div>
+                                    <input type="date" class="form-control" id="purchaseTo">
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-primary" id="getPurchaseBills">
+                                            Get Reports
+                                        </button>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <table style="width:100%" class="table table-hover table-striped table-sm" id="PurchaseBillsTable">
+                        <thead>
+                            <tr class="bg-primary text-light">
+                                <th>Bill No.</th>
+                                <th>Customer Name</th>
+                                <th>Bill Total</th>
+                                <th>Tax Amount</th>
+                                <th>Net Amount</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="ItemWiseSalesList" role="tabpanel" aria-labelledby="pills-home-tab">
+                <div class="card-body">
+                    <table style="width:100%" class="table table-hover table-striped table-sm" id="ItemWiseSList">
+                        <thead>
+                            <tr class="bg-primary text-light">
+                                <th>Slno</th>
+                                <th>Item Name</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Total Tax</th>
+                                <th>Total Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="ItemWisePurchaseList" role="tabpanel" aria-labelledby="pills-home-tab">
+                <div class="card-body">
+                    <table style="width:100%" class="table table-hover table-striped table-sm" id="ItemWisePList">
+                        <thead>
+                            <tr class="bg-primary text-light">
+                                <th>Slno</th>
+                                <th>Item Name</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Total Tax</th>
+                                <th>Total Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="StockList" role="tabpanel" aria-labelledby="pills-home-tab">
+                <div class="card-body">
+                    <table style="width:100%" class="table table-hover table-striped table-sm" id="StocksList">
+                        <thead>
+                            <tr class="bg-primary text-light">
+                                <th>Slno</th>
+                                <th>Item Name</th>
+                                <th>Selling Price</th>
+                                <th>Cost Price</th>
+                                <th>Available Stock</th>
+                                <th>Sales Value</th>
+                                <th>Purchase Value</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+
+<script>
+    $(document).ready(function () {
+        $('#newCustomer').click(function () {
+            $('#myTab a[href="#form"]').tab('show')
+        })
+
+        $('#listCustomer').click(function () {
+            $('#myTab a[href="#list"]').tab('show')
+        })
+
+        var salesTable = $('#SalesBillsTable').DataTable({
+            ajax: {
+                url: '/api/pos/SalesBillReport',
+                dataSrc: ""
+            },
+            columns: [
+                {
+                    data: 'id',
+                },
+                {
+                    data: 'customer.name',
+                },
+                {
+                    data: 'billTotal',
+                },
+                {
+                    data: 'totalTax',
+                },
+                {
+                    data: 'netTotal',
+                },
+                {
+                    data: 'billedDateTime',
+                },
+            ],
+            fnRowCallback: function (nRow, aData, iDisplayIndex) {
+                $("td:first", nRow).html(iDisplayIndex + 1);
+                return nRow;
+            }
+        })
+
+        $('#getSalesBills').click(function(){
+            $.getJSON(`/api/pos/SalesBillReport?from_date=${$('#salesFrom').val()}&to_date=${$('#salesTo').val()}`, {}, function (data) {
+                salesTable.destroy();
+                salesTable = $('#SalesBillsTable').DataTable({
+                    data:data,
+                    columns: [
+                        {
+                            data: 'id',
+                        },
+                        {
+                            data: 'customer.name',
+                        },
+                        {
+                            data: 'billTotal',
+                        },
+                        {
+                            data: 'totalTax',
+                        },
+                        {
+                            data: 'netTotal',
+                        },
+                        {
+                            data: 'billedDateTime',
+                        },
+                    ],
+            fnRowCallback: function (nRow, aData, iDisplayIndex) {
+                $("td:first", nRow).html(iDisplayIndex + 1);
+                return nRow;
+            }
+                })
+            })
+        })
+
+        var purchaseTable = $('#PurchaseBillsTable').DataTable({
+            ajax: {
+                url: '/api/pos/PurchaseBillReport',
+                dataSrc: ""
+            },
+            columns: [
+                {
+                    data: 'id',
+                },
+                {
+                    data: 'supplier.name',
+                },
+                {
+                    data: 'billTotal',
+                },
+                {
+                    data: 'totalTax',
+                },
+                {
+                    data: 'netTotal',
+                },
+                {
+                    data: 'billedDateTime',
+                },
+            ],
+            fnRowCallback: function (nRow, aData, iDisplayIndex) {
+                $("td:first", nRow).html(iDisplayIndex + 1);
+                return nRow;
+            }
+        })
+        
+        $('#getPurchaseBills').click(function(){
+            $.getJSON(`/api/pos/PurchaseBillReport?from_date=${$('#purchaseFrom').val()}&to_date=${$('#purchaseTo').val()}`, {}, function (data) {
+                purchaseTable.destroy();
+                purchaseTable = $('#PurchaseBillsTable').DataTable({
+                    data:data,
+                    columns: [
+                        {
+                            data: 'id',
+                        },
+                        {
+                            data: 'supplier.name',
+                        },
+                        {
+                            data: 'billTotal',
+                        },
+                        {
+                            data: 'totalTax',
+                        },
+                        {
+                            data: 'netTotal',
+                        },
+                        {
+                            data: 'billedDateTime',
+                        },
+                    ],
+            fnRowCallback: function (nRow, aData, iDisplayIndex) {
+                $("td:first", nRow).html(iDisplayIndex + 1);
+                return nRow;
+            }
+                })
+            })
+        })
+
+        
+
+        var salesItemWise = $('#ItemWiseSList').DataTable({
+            ajax: {
+                url: '/api/pos/SalesItemWise',
+                dataSrc: ''
+            },
+            columns: [
+                {
+                    data: 'product',
+                }, {
+                    data: 'product__name',
+                }, {
+                    data: 'product__sellingPrice',
+                    render: function (data, type, product) {
+                        return `YER ${data}`
+                    }
+                }, {
+                    data: 'sum_quantity',
+                    render: function (data, type, product) {
+                        return `${data} ${product.product__uom}`
+                    }
+                },
+                {
+                    data: 'sum_taxAmount',
+                    render: function (data, type, product) {
+                        return "YER " + data
+                    }
+                },
+                {
+                    data: 'sum_netAmount',
+                    render: function (data, type, product) {
+                        return "YER " + data
+                    }
+                }
+            ],
+            fnRowCallback: function (nRow, aData, iDisplayIndex) {
+                $("td:first", nRow).html(iDisplayIndex + 1);
+                return nRow;
+            }
+        })
+
+        var purchaseItemWise = $('#ItemWisePList').DataTable({
+            ajax: {
+                url: '/api/pos/PurchaseItemWise',
+                dataSrc: ''
+            },
+            columns: [
+                {
+                    data: 'product',
+                }, {
+                    data: 'product__name',
+                }, {
+                    data: 'product__costPrice',
+                    render: function (data, type, product) {
+                        return `YER ${data}`
+                    }
+                }, {
+                    data: 'sum_quantity',
+                    render: function (data, type, product) {
+                        return `${data} ${product.product__uom}`
+                    }
+                },
+                {
+                    data: 'sum_taxAmount',
+                    render: function (data, type, product) {
+                        return "YER " + data
+                    }
+                },
+                {
+                    data: 'sum_netAmount',
+                    render: function (data, type, product) {
+                        return "YER " + data
+                    }
+                }
+            ],
+            fnRowCallback: function (nRow, aData, iDisplayIndex) {
+                $("td:first", nRow).html(iDisplayIndex + 1);
+                return nRow;
+            }
+        })
+
+
+        var stockTable = $('#StocksList').DataTable({
+            ajax: {
+                url: '/api/pos/products/',
+                dataSrc: ''
+            },
+            columns: [
+                {
+                    data: 'id',
+                }, {
+                    data: 'name',
+                }, {
+                    data: 'sellingPrice',
+                    render: function (data, type, product) {
+                        return `YER ${data}`
+                    }
+                }, {
+                    data: 'costPrice',
+                    render: function (data, type, product) {
+                        return `YER ${data}`
+                    }
+                }, {
+                    data: 'available_stock',
+                    render: function (data, type, product) {
+                        return `${data} ${product.uom}`
+                    }
+                },
+                {
+                    data: 'available_stock',
+                    render: function (data, type, product) {
+                        var totalValue = parseFloat(product.sellingPrice) * parseFloat(product.available_stock)
+                        return "YER " + totalValue
+                    }
+                },
+                {
+                    data: 'available_stock',
+                    render: function (data, type, product) {
+                        var totalValue = parseFloat(product.costPrice) * parseFloat(product.available_stock)
+                        return "YER " + totalValue
+                    }
+                }
+            ],
+            fnRowCallback: function (nRow, aData, iDisplayIndex) {
+                $("td:first", nRow).html(iDisplayIndex + 1);
+                return nRow;
+            }
+        })
+    })
+</script>
+
+{% endblock %}

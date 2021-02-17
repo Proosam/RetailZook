@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+    <div class="card mt-3">
+        <div class="card-header">
+            <h5 id="title">UOMs</h5>
+        </div>
+        <div class="card-body">
+            <form id="UOMForm">
+                <input type="hidden" name="id" id="u_id">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="UOM">UOM</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" name="unit" id="unit"
+                                    placeholder="Enter Unit of Measurement">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-primary" id="submitBtn">
+                                        Add Unit
+                                    </button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <table class="table table-bordered table-striped table-hover table-sm" id="UOMs">
+                <thead>
+                    <tr class="bg-primary text-light">
+                        <th>Slno.</th>
+                        <th>UOM</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+    $(document).ready(function(){
+
+        var table = $('#UOMs').DataTable({
+            ajax:{
+                url:'/api/pos/uoms/',
+                dataSrc:''
+            },
+            columns:[
+                {
+                    data:'id',
+                    "className":"align-middle"
+                },{
+                    data:'unit',
+                    "className":"align-middle"
+                },{
+                    data:'id',
+                    render:function(data,type,row){
+                        return `<button type="button" data-id='${data}' data-obj='${JSON.stringify(row)}' class="btn rounded-circle btn-primary btn-sm edit">
+                                    <i class="fa fa-edit"></i>
+                                </button>
+                                <button type="button" data-id='${data}' class="btn rounded-circle btn-danger btn-sm delete">
+                                    <i class="fa fa-trash"></i>
+                                </button>`
+                    }
+                }
+            ],
+            fnRowCallback: function (nRow, aData, iDisplayIndex) {
+                $("td:first", nRow).html(iDisplayIndex + 1);
+                return nRow;
+            }
+        })
+
+        crudOperations({
+              url:'/api/pos/uoms/',
+              put_url: '/api/pos/uoms/',
+              table_id:'#UOMs',
+              id_selector:'#u_id',
+              form_id:'#UOMForm',
+              table:table,
+              entity:'Unit',
+              tabs:false,
+        })
+    })
+</script>
+{% endblock %}

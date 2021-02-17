@@ -1,0 +1,316 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container billing-page">
+    <div class="card mt-3">
+        <div class="card-header">
+            <h5>Purchase Entry</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group ">
+                        <label for="SupplierName">Supplier</label>
+                        <input type="text" class="form-control form-control-sm" placeholder="Enter Supplier Name"
+                            id="SupplierName">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="SupplierEmail">Email</label>
+                        <input type="text" class="form-control form-control-sm" placeholder="Enter Supplier Email"
+                            id="SupplierEmail">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="SupplierPhone">Phone Number</label>
+                        <input type="text" class="form-control form-control-sm"
+                            placeholder="Enter Supplier Phone Number" id="SupplierPhone">
+                    </div>
+                </div>
+            </div>
+            <table class="table table-bordered table-sm table-hover scroll" id="fee-items">
+                <thead>
+                    <tr>
+                        <th class="w-50">Particulars</th>
+                        <th style="width: 70px;">Qty</th>
+                        <th style="width: 80px;">Unit</th>
+                        <th style="width: 100px;">Price</th>
+                        <th style="width: 70px;">Tax</th>
+                        <th>Amount</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr id="addRow">
+                        <td>
+                            <input type="text" class="form-control form-control-sm" id="Particulars">
+                            <input type="hidden" id="productId">
+                        </td>
+                        <td>
+                            <input value="1" type="number" id="Qty" class="form-control form-control-sm">
+                        </td>
+                        <td>
+                            <input type="text" readonly id="Unit" class="form-control form-control-sm ">
+                        </td>
+                        <td>
+                            <input type="number" readonly id="Price" class="form-control form-control-sm">
+                        </td>
+                        <td>
+                            <input type="text" readonly id="Tax" class="form-control form-control-sm">
+                        </td>
+                        <td>
+                            <input type="number" id="Amount" readonly class="form-control form-control-sm">
+                        </td>
+                        <td>
+                            <button class="btn btn-primary btn-sm" id="addButton">
+                                <i class="fa fa-plus-circle"></i>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="AmountInWords"><strong>Amount In Words</strong></label>
+                        <textarea name="AmountInWords" id="AmountInWords" rows="4"
+                            class="form-control form-control-sm" disabled></textarea>
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    
+                </div>
+                <div class="col-md-4">
+                    <table class="table">
+                        <tr>
+                            <th>Subtotal</th>
+                            <td class="text-right" id="subTotal">0</td>
+                        </tr>
+                        <tr>
+                            <th>Discount</th>
+                            <td><input type="text" class="form-control form-control-sm"
+                                    placeholder="Enter Discount Amount"></td>
+                        </tr>
+                        <tr>
+                            <th>Total Tax</th>
+                            <td class="text-right" id="totalTax">0</td>
+                        </tr>
+                        <tr class="bg-secondary text-light">
+                            <th>Grand Total</th>
+                            <th class="text-right" id="grandTotal">0</th>
+                        </tr>
+                        <tr>
+                            <td class="w-50">
+                                <button class="btn btn-success btn-block" id="SaveBill">
+                                    <i class="fa fa-save"></i> Save Bill
+                                </button>
+                            </td>
+                            <td class="w-50">
+                                <a href="/Purchase" class="btn btn-danger btn-block">
+                                    <i class="fa fa-undo"></i> Reset
+                                </a>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function deleteRow(trash) {
+        $(trash).closest('tr').remove();
+    };
+    $(document).ready(function () {
+        //Variables
+        var postData = {
+            discount: 0,
+            products: []
+        }
+        map = {}
+
+        //generic autocomplete function
+        function autocomplete(list, input) {
+            var bh_list = new Bloodhound({
+                datumTokenizer: Bloodhound.tokenizers.whitespace,
+                queryTokenizer: Bloodhound.tokenizers.whitespace,
+                // `states` is an array of state names defined in "The Basics"
+                local: list
+            });
+
+            $(input).typeahead({
+                hint: true,
+                highlight: true,
+                minLength: 1
+            },
+                {
+                    name: 'states',
+                    source: bh_list
+                });
+        }
+
+        //Suppliers Autocomplete
+        $.getJSON('/api/pos/suppliers/', {}, function (data) {
+            var SuppliersNamesList = []
+            var SuppliersEmailsList = []
+            var SuppliersPhonesList = []
+            $.each(data, function (i, item) {
+                map[item.name] = item
+                map[item.email] = item
+                map[item.phoneNumber] = item
+                SuppliersNamesList.push(item.name)
+                SuppliersEmailsList.push(item.email)
+                SuppliersPhonesList.push(item.phoneNumber)
+            })
+
+            autocomplete(SuppliersNamesList, "#SupplierName")
+            autocomplete(SuppliersEmailsList, "#SupplierEmail")
+            autocomplete(SuppliersPhonesList, "#SupplierPhone")
+        })
+
+        $('#SupplierName,#SupplierEmail,#SupplierPhone').on('typeahead:selected', function (evt, item) {
+            var val = $(this).val()
+            var Supplier = map[val]
+            postData.supplierId = Supplier.id
+            $('#SupplierName').val(Supplier.name)
+            $('#SupplierEmail').val(Supplier.email)
+            $('#SupplierPhone').val(Supplier.phoneNumber)
+        })
+
+        //Products Autocomplete
+        $.getJSON('/api/pos/products/', {}, function (data) {
+            var ProductsList = []
+            $.each(data, function (i, item) {
+                map[item.name] = item
+                ProductsList.push(item.name)
+            })
+
+            autocomplete(ProductsList, "#Particulars")
+        })
+
+        $('#Particulars').on('typeahead:selected', function (evt, item) {
+            var val = $(this).val()
+            var product = map[val]
+
+            $('#Price').val(product.costPrice)
+            $('#Unit').val(product.uom)
+            $('#Tax').val(product.tax_percent)
+            $('#productId').val(product.id)
+            $("#Qty").focus(function() { $(this).select(); } );
+            $('#Qty').focus()
+            var total = parseFloat(product.costPrice) + (product.costPrice * (product.tax_percent / 100))
+            $('#Amount').val(total.toFixed(2))
+        })
+
+        $('#Qty').on('change keyup paste', function () {
+            var Price = parseFloat($('#Price').val())
+            var Qty = parseFloat($('#Qty').val())
+            var Tax = parseFloat($('#Tax').val())
+            var total = Price = (Price * Qty) + (Price * Qty) * (Tax / 100)
+            $('#Amount').val(total.toFixed(2))
+        })
+
+        function formatRows(Particulars, Qty, Unit, Price, Tax, Amount) {
+            return `<tr>
+                        <td class="w-50">${Particulars}</td>
+                        <td style="width: 70px;">${Qty}</td>
+                        <td style="width: 80px;">${Unit}</td>
+                        <td style="width: 100px;">${Price}</td>
+                        <td style="width: 70px;">${Tax}</td>
+                        <td>${Amount}</td>
+                        <td>
+                            <a href="#" class="btn btn-danger btn-sm" onClick="deleteRow(this)">
+                                <i class="fa fa-trash" aria-hidden="true"></i>
+                            </a>
+                        </td>
+                        </tr>`;
+        };
+
+        $('#addButton').click(function () {
+           
+            var Particulars = $('#Particulars').val()
+            var Price = parseFloat($('#Price').val())
+            var Qty = parseFloat($('#Qty').val())
+            var Tax = parseFloat($('#Tax').val())
+            var Unit = $('#Unit').val()
+            var Amount = parseFloat($('#Amount').val())
+            /*
+            quantity = serializers.IntegerField()
+    total = serializers.DecimalField(max_digits=10,decimal_places=2)
+    taxAmount = serializers.DecimalField(max_digits=10,decimal_places=2)
+    netAmount = serializers.DecimalField(max_digits=10,decimal_places=2)
+            */
+            var product={
+                productId:$('#productId').val(),
+                quantity:Qty,
+                taxAmount: (Price * Qty) * (Tax / 100),
+                total: (Price * Qty),
+                netAmount:Amount
+            }
+
+            var productAlreadyExists = postData.products.some(function(type){
+                return product.productId == type.productId
+            })
+
+            if(productAlreadyExists == true){
+                alert("Product Already Exists")
+                return
+            }
+
+            postData.products.push(product)
+            $(formatRows(Particulars, Qty,Unit, Price,Tax,Amount)).insertAfter('#addRow');
+            $('#addRow input').val('');
+            $('#Qty').val(1)
+            calculate();
+        })
+
+        //calculation
+        var calculate = () => {
+            var subTotal = 0.0
+            var totalTax = 0.0
+            var netAmount = 0.0
+            $.each(postData.products,function(i,item){
+                subTotal += item.total 
+                totalTax += item.taxAmount 
+                netAmount += item.netAmount
+            })
+            $('#subTotal').html('YER ' + subTotal.toFixed(2))
+            $('#totalTax').html('YER ' + totalTax)
+            $('#grandTotal').html('YER ' + netAmount.toFixed(2))
+            $('#AmountInWords').html(inWords(netAmount) + "Yemani Riyals only")
+        }
+
+        $('#SaveBill').click(function(){
+            if(!postData.supplierId){
+                alert("Can't Save without Supplier Details")
+                return
+            }
+            if(postData.products.length == 0){
+                alert("Can't Save. There are no items added to the bill")
+                return
+            }
+            var btnText = $('#SaveBill').html()
+            $('#SaveBill').html(`
+            <i class="fa fa-spinner fa-spin"></i> Saving Bill
+            `)
+            $.ajax({
+                url:'/api/pos/PurchaseBill',
+                data:JSON.stringify(postData),
+                contentType:"application/json",
+                method:'POST'
+            }).done((res)=>{
+                alert(res.Message)
+                window.location.href = `/invoice?id=${res.bill.id}&type=P`
+            }).fail((err)=>{
+                alert("Error Occured!")
+                console.log(err);
+            })
+        })
+
+    })
+</script>
+{% endblock %}

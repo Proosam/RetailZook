@@ -1,0 +1,193 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container" style="text-align:right">
+    <div class="card mt-3">
+        <div class="card-header bg-warning  text-primary">
+            <h5 id="title">لوحة الموظفين</h5>
+        </div>
+        <ul class="nav nav-pills sr-only" id="myTab" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#list" role="tab"
+                    aria-controls="pills-home" aria-selected="true">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#form" role="tab"
+                    aria-controls="pills-profile" aria-selected="false">Profile</a>
+            </li>
+        </ul>
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active" id="list" role="tabpanel" aria-labelledby="pills-home-tab">
+                
+                <div class="card-body">
+                    <div class="form-group">
+                        <button class="btn btn-danger btn-sm" id="newemployee">
+                            <i class="fa fa-plus-circle"></i> اضف موظفف جديد 
+                        </button>
+                    </div>
+                    <table class="table table-hover table-striped table-sm" id="employee">
+                        <thead>
+                            <tr class="bg-warning text-black">
+                                <th>Slno</th>
+                                <th>employee  Name</th>
+                                <th>Email</th>
+                                <th>Phone Number</th>
+                                <th> salary </th>
+                               
+                                
+                                <th> address </th>
+                               <th>operations</th>
+                                
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="form" role="tabpanel" aria-labelledby="pills-home-tab">
+                <div class="card-body">
+                    <form id="employeeform">
+                        <div class="row">
+                            <div class="offset-md-3 col-md-6">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <input type="hidden" name="id" id="emp_id">
+                                        
+                                        <div class="from-group">
+                                         <label for="name">emp  Name</label> 
+                                         <input type="text" class="form-control" name="name" id="name" placeholder="Enter emp Name"> 
+                                        </div>
+                                        <div class="from-group">
+                                            <label for="email">Email</label>
+                                            <input type="text" class="form-control" name="email" id="email" placeholder="Enter emp Email">
+                                        </div>
+                                        <div class="from-group">
+                                            <label for="phoneNumber">Phone Number</label>
+                                            <input type="text" class="form-control" name="phoneNumber" id="phoneNumber" placeholder="Enter emp Phone Number">
+                                        </div>
+                                        <div class="from-group">
+                                            <label for="salary">salary info </label>
+                                            <input type="text" class="form-control" name="salary" id="salary" placeholder="Enter emp salry ">
+                                        </div>
+                                      
+                                        <div class="from-group">
+                                            <label for="salary">payingnow </label>
+                                            <input type="text" class="form-control" name="paidto1" id="paidto1" placeholder="Enter emp now ">
+                                        </div>
+                                        <div class="from-group">
+                                            <label for="address">address</label>
+                                            <textarea name="address" id="address" class="form-control" rows="4"
+                                                placeholder="Enter emp Address"></textarea>
+                                        </div>
+                                    
+                                    </div>
+                                </div>
+                                <div class="form-group mt-3">
+                                    <button class="btn btn-warning" id="submitBtn">
+                                        اضف موظفف
+                                    </button>
+                                    <button class="btn btn-secondary" type="reset">
+                                      تراجع
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer">
+                    <button class="btn btn-primary btn-sm float-right" id="listCustomer">
+                        <i class="fa fa-tasks"></i> Inventory List
+                    </button>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+
+<script>
+    $(document).ready(function(){
+        $('#newemployee').click(function(){
+          $('#myTab a[href="#form"]').tab('show')
+        })
+        
+        $('#listemployee').click(function(){
+          $('#myTab a[href="#list"]').tab('show')
+        })
+
+        var table = $('#employee').DataTable({
+            ajax:{
+                url:'/api/pos/employee/',
+                dataSrc:''
+            },
+            columns:[
+                {
+                    data:'id',
+                    "className":"align-middle"
+                },{
+                    data:'name',
+                    "className":"align-middle"
+                },{
+                    data:'email',
+                    "className":"align-middle"
+                },
+                {
+                    data:'phoneNumber',
+                    "className":"align-middle"
+                },
+                {
+                    data:'salary',
+                    "className":"align-middle"   
+                },
+             
+                
+              
+                {
+                    data:'address',
+                    "className":"align-middle"   
+                },
+                {
+                    data:'id',
+                    render:function(data,type,row){
+                        
+                        return `<button type="button" data-id='${data}' data-obj='${JSON.stringify(row)}' class="btn rounded-circle btn-primary btn-sm edit">
+                                    <i class="fa fa-edit">تعديل</i>
+
+                                </button>
+                                <button type="button" data-id='${data}' data-obj='${JSON.stringify(row)}' class="btn rounded-circle btn-black btn-bg update id="pay" >
+                                   <i class="fa fa-plus-circle"> <a href="employeepay?='${data}"> <b>pay the salary</b></a></i>
+                                </button>
+                                <button type="button" data-id='${data}' class="btn rounded-circle btn-danger btn-sm delete">
+                                    <i class="fa fa-trash">مسح</i>
+                                </button>`
+                             
+                              
+                    }
+                    
+                }
+            ]
+        })
+      
+
+        crudOperations({
+              url:'/api/pos/employee/',
+              put_url: '/api/pos/employee/',
+              table_id:'#employee',
+              id_selector:'#emp_id',
+              form_id:'#employeeform',
+              table:table,
+              entity:'employee',
+              tabs:true,
+        })
+
+
+        $('.pay').click(function () {
+
+            alert ("This is an alert dialog box");  
+
+        })
+    })
+</script>
+
+{% endblock %}

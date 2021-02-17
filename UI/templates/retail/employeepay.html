@@ -1,0 +1,195 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container" style="text-align:right">
+    <div class="card mt-4">
+        <div class="card-header  bg-warning  text-primary">
+            <h5 id="title" > payemnts لوحة الموظفين</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="from-group">
+                    <label for="emp">select employee name </label>
+                    <select name="emp" id="emp" class="form-control">
+                        <option value="">select emp</option>
+                        {% for emp in emps %}
+                        <option value="{{emp.name}}">{{emp.name}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group ">
+
+                        <label for="employeeName">employee</label>
+                        <input type="text" class="form-control form-control-sm" placeholder="Enter Customer Name"
+                            id="employeeName">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="CustomerEmail">Email</label>
+                        <input type="text" class="form-control form-control-sm" placeholder="Enter Customer Email"
+                            id="employeeEmail">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="CustomerEmail">salary</label>
+                        <input type="text" class="form-control form-control-sm" placeholder="Enter Customer Email" readonly
+                            id="employeesalary">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="CustomerEmail">days of  the month  </label>
+                        <input type="text" class="form-control form-control-sm" placeholder="Enter days of month  "
+                            id="daysofmonth">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="CustomerEmail">allowance </label>
+                        <input type="text" class="form-control form-control-sm" placeholder="Enter alloance "
+                            id="allowance">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="CustomerEmail">days attendance </label>
+                        <input type="text" class="form-control form-control-sm" placeholder="Enter no of days  attended"
+                            id="presntdays">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="CustomerPhone">Phone Number</label>
+                        <input type="text" class="form-control form-control-sm"
+                            placeholder="Enter Customer Phone Number" id="employeePhone">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="CustomerPhone">total payment </label>
+                        <input type="text" class="form-control form-control-sm"
+                            placeholder="Enter Customer Phone Number" id="Amount">
+                    </div>
+                </div>
+            </div>
+                    </div>
+                    
+              
+                    <button type="button class="btn btn-warning  id="slipbill">
+                        <a href='salaryslip'><i class="fa fa-save"></i></a> genrete the slip
+                        
+                    </button>
+                    
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+{% endblock %}
+{% block scripts %}
+
+<script> 
+    
+$(document).ready(function () {
+    //Variables
+    var postData = {
+        discount: 0,
+        products: []
+    }
+    map = {}
+
+          //generic autocomplete function
+        function autocomplete(list, input) {
+            var bh_list = new Bloodhound({
+                datumTokenizer: Bloodhound.tokenizers.whitespace,
+                queryTokenizer: Bloodhound.tokenizers.whitespace,
+                // `states` is an array of state names defined in "The Basics"
+                local: list
+            });
+
+            $(input).typeahead({
+                hint: true,
+                highlight: true,
+                minLength: 1
+            },
+                {
+                    name: 'states',
+                    source: bh_list
+                });
+        }
+
+        //Customers Autocomplete
+        $.getJSON('/api/pos/employee/', {}, function (data) {
+            var employeeNamesList = []
+            var employeeEmailsList = []
+            var employeePhonesList = []
+            var employeesalarylist = []
+            $.each(data, function (i, item) {
+                map[item.name] = item
+                map[item.email] = item
+                map[item.phoneNumber] = item
+                map[item.salary] = item
+                employeeNamesList.push(item.name)
+                employeeEmailsList.push(item.email)
+                employeePhonesList.push(item.phoneNumber)
+                employeesalarylist.push(item.salary)
+            })
+
+            autocomplete(employeeNamesList, "#employeeName")
+            autocomplete(employeeEmailsList, "#employeeEmail")
+            autocomplete(employeePhonesList, "#employeePhone")
+            autocomplete(employeesalarylist, "#employeesalary")
+        })
+
+        $('#employeeName,#employeeEmail,#employeePhone,#employeesalary').on('typeahead:selected', function (evt, item) {
+            var val = $(this).val()
+            var employee= map[val]
+            postData.employeeId = employee.id
+            $('#employeeName').val(employee.name)
+            $('#employeeEmail').val(employee.email)
+            $('#employeePhone').val(employee.phoneNumber)
+            $('#employeesalary').val(employee.salary)
+        })
+
+        $('#presntdays').on('change keyup paste', function () {
+            var salary = parseFloat($('#employeesalary').val())
+            var allowance = parseFloat($('#allowance').val())
+         
+            var daysofmonth = parseFloat($('#daysofmonth').val())
+            var presntdays = parseFloat($('#presntdays').val())
+            var total=salary+allowance
+            var netsalry=(total/daysofmonth)*presntdays;
+            $('#Amount').val(netsalry.toFixed(2))
+        })
+
+        $('#ٍslipbill').click(function(){
+            if(!postData.employeeId){
+                alert("Can't Save without employee Details")
+                return
+            }
+            var btnText = $('#slipbill').html()
+            $('#slipbill').html(`
+            <i class="fa fa-spinner fa-spin"></i> Saving 
+            `)
+            $.ajax({
+                url:'/api/pos/Slipbill',
+                data:JSON.stringify(postData),
+                contentType:"application/json",
+                method:'POST'
+            }).done((res)=>{
+                alert(res.Message)
+              
+            }).fail((err)=>{
+                alert("Error Occured!")
+                console.log(err);
+            }
+            )}
+)})
+</script>
+{% endblock %}
