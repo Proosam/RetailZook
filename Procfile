@@ -1,2 +1,4 @@
 web: gunicorn RetailShop.wsgi --log-file -
-web: gunicorn app:app
+web: gunicorn RetailShop:app --log-file -
+
+
