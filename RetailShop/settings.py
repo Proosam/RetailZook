@@ -27,7 +27,7 @@ SECRET_KEY = 'ewp#h6fhij+2nk5qasb62j$3)baryex0gmtqrsz%cs1z2x+)8b'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['localhost','127.0.0.1','zookteckretail.herokuapp.com','https://zookretail.herokuapp.com']
+ALLOWED_HOSTS = ['localhost','127.0.0.1','zookteckretail.herokuapp.com','zookteckretailsop.herokuapp.com']
 
 
 # Application definition
